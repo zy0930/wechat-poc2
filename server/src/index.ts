@@ -29,7 +29,7 @@ app.use(session({
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
-}));
+}) as any);
 
 // Routes
 app.use(routes);
