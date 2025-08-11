@@ -23,5 +23,9 @@
     "concurrently": "^8.2.2"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "react-router": "^6.28.0",
+    "react-router-dom": "^6.28.0"
+  }
 }
