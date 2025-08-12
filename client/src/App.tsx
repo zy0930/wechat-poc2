@@ -88,7 +88,11 @@ function App() {
           } />
 
           <Route path="/booking" element={
-            user ? (
+            loading ? (
+              <div className="loading-container">
+                <h2>加载中...</h2>
+              </div>
+            ) : user ? (
               <BookingForm openid={user.openid} />
             ) : (
               <Navigate to="/" replace />
