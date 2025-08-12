@@ -107,6 +107,21 @@ router.post('/api/booking/submit', async (req: Request, res: Response) => {
       guestMessageData
     );
 
+    // Send customer service message to enable chat between guest and support
+    const customerServiceMessage = `您好！感谢您的预订。我们的客服将很快与您联系，为您提供进一步的协助。如有任何疑问，请随时回复此消息。
+
+预订详情：
+预订编号：${bookingId}
+客户姓名：${name}
+联系电话：${phone}
+预约时间：${date}`;
+
+    const customerServiceSent = await wechatService.sendCustomerServiceMessage(
+      openid,
+      customerServiceMessage
+    );
+
+
     // In a real application, you would save the booking to database here
     // For POC, we'll just return success
     
@@ -114,6 +129,7 @@ router.post('/api/booking/submit', async (req: Request, res: Response) => {
       success: true,
       bookingId,
       guestMessageSent,
+      customerServiceSent,
       message: 'Booking submitted successfully'
     });
   } catch (error) {
@@ -129,6 +145,30 @@ router.post('/api/booking/submit', async (req: Request, res: Response) => {
 router.get('/MP_verify_6GIw6gWF6x17riAH.txt', (req: Request, res: Response) => {
   res.type('text/plain');
   res.send('6GIw6gWF6x17riAH');
+});
+
+// Test customer service message endpoint
+router.post('/api/test/customer-service', async (req: Request, res: Response) => {
+  const { openid, message } = req.body;
+  
+  if (!openid || !message) {
+    return res.status(400).json({ error: 'openid and message are required' });
+  }
+
+  try {
+    const result = await wechatService.sendCustomerServiceMessage(openid, message);
+    
+    res.json({
+      success: result,
+      message: result ? 'Customer service message sent successfully' : 'Failed to send message'
+    });
+  } catch (error) {
+    console.error('Test customer service message error:', error);
+    res.status(500).json({ 
+      error: 'Failed to send test message',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 });
 
 // Health check endpoint

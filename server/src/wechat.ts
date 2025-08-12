@@ -310,6 +310,58 @@ class WeChatService {
     }
   }
 
+  // Send customer service message to guest to enable chat
+  async sendCustomerServiceMessage(
+    openid: string, 
+    message: string
+  ): Promise<boolean> {
+    try {
+      const accessToken = await this.getAccessToken();
+      
+      const data = {
+        touser: openid,
+        msgtype: 'text',
+        text: {
+          content: message
+        }
+      };
+
+      console.log('Sending customer service message to guest:', {
+        openid: openid.substring(0, 8) + '...',
+        messageLength: message.length
+      });
+
+      const response = await axios.post(
+        `https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}`,
+        data
+      );
+
+      if (response.data.errcode === 0) {
+        console.log('Customer service message sent successfully to guest');
+        return true;
+      } else {
+        console.error('Failed to send customer service message:', {
+          errcode: response.data.errcode,
+          errmsg: response.data.errmsg
+        });
+        
+        // Common error codes
+        if (response.data.errcode === 45015) {
+          console.error('Reply time limit exceeded (48 hours)');
+        } else if (response.data.errcode === 40001) {
+          console.error('Invalid access token');
+        } else if (response.data.errcode === 40013) {
+          console.error('Invalid OpenID');
+        }
+        
+        return false;
+      }
+    } catch (error) {
+      console.error('Error sending customer service message:', error);
+      return false;
+    }
+  }
+
 }
 
 export default new WeChatService();
