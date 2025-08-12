@@ -159,6 +159,12 @@ class WeChatService {
         data: data
       };
 
+      console.log('Sending template message with:', {
+        templateId,
+        openid: openid.substring(0, 8) + '...',
+        dataKeys: Object.keys(data)
+      });
+
       const response = await axios.post(
         `https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${accessToken}`,
         message
@@ -168,7 +174,18 @@ class WeChatService {
         console.log('Template message sent successfully:', response.data.msgid);
         return true;
       } else {
-        console.error('Failed to send template message:', response.data);
+        console.error('Failed to send template message:', {
+          errcode: response.data.errcode,
+          errmsg: response.data.errmsg,
+          templateId,
+          rid: response.data.rid
+        });
+        
+        // Common error explanations
+        if (response.data.errcode === 40037) {
+          console.error('Template ID error: Check if template exists and is approved');
+        }
+        
         return false;
       }
     } catch (error) {
@@ -215,17 +232,22 @@ class WeChatService {
   // Create service booking notification template data
   createServiceBookingNotificationData(
     productType: string,
+    customerName: string,
     bookingNumber: string,
     expiryDate: string,
     remark: string = ''
   ): TemplateMessageData {
     return {
       first: {
-        value: '服务预订通知',
+        value: '您好，您已预订成功，请尽快付款。',
         color: '#173177'
       },
       productType: {
         value: productType,
+        color: '#173177'
+      },
+      name: {
+        value: customerName,
         color: '#173177'
       },
       number: {
@@ -237,7 +259,7 @@ class WeChatService {
         color: '#173177'
       },
       remark: {
-        value: remark || '感谢您的预订，我们将为您提供优质服务。',
+        value: remark || '如有疑问，请咨询13912345678。',
         color: '#666666'
       }
     };
@@ -247,6 +269,7 @@ class WeChatService {
   async sendServiceBookingNotification(
     openid: string,
     productType: string,
+    customerName: string,
     bookingNumber: string,
     expiryDate: string,
     remark?: string,
@@ -255,6 +278,7 @@ class WeChatService {
     const templateId = process.env.WECHAT_TEMPLATE_GUEST || 'tIkObjUKN-QrkrfqZ_OMS7X0I7aejVUwEqqfgi4YviY';
     const data = this.createServiceBookingNotificationData(
       productType,
+      customerName,
       bookingNumber,
       expiryDate,
       remark
