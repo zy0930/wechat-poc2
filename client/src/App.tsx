@@ -30,17 +30,25 @@ function App() {
       addDebug(`Params: authorized=${authorized}, openid=${openid}`);
 
       if (authorized === 'true' && openid) {
-        addDebug('OAuth callback detected, getting user info...');
-        // Get user info from session
-        const userInfo = await getUserInfo();
-        addDebug(`User info received: ${userInfo ? 'SUCCESS' : 'FAILED'}`);
+        addDebug('OAuth callback detected, creating user from URL params...');
+        // Create user object directly from URL params - we have the openid already
+        const userInfo = {
+          openid: openid,
+          nickname: 'WeChat User', // Placeholder since we have the openid
+          headimgurl: 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4uBNVoQ/132' // Default avatar
+        };
+        addDebug(`User created: ${userInfo.openid}`);
         setUser(userInfo);
       } else {
         addDebug('No OAuth callback, trying existing session...');
         // Try to get existing user info from session
-        const userInfo = await getUserInfo();
-        addDebug(`Existing session: ${userInfo ? 'SUCCESS' : 'FAILED'}`);
-        setUser(userInfo);
+        try {
+          const userInfo = await getUserInfo();
+          addDebug(`Existing session: SUCCESS`);
+          setUser(userInfo);
+        } catch (err) {
+          addDebug(`Existing session: FAILED`);
+        }
       }
     } catch (err) {
       addDebug(`Authorization failed: ${err}`);
