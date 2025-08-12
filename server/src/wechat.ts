@@ -212,6 +212,80 @@ class WeChatService {
     };
   }
 
+  // Create service booking notification template data
+  createServiceBookingNotificationData(
+    productType: string,
+    bookingNumber: string,
+    expiryDate: string,
+    remark: string = ''
+  ): TemplateMessageData {
+    return {
+      first: {
+        value: '服务预订通知',
+        color: '#173177'
+      },
+      productType: {
+        value: productType,
+        color: '#173177'
+      },
+      number: {
+        value: bookingNumber,
+        color: '#173177'
+      },
+      expDate: {
+        value: expiryDate,
+        color: '#173177'
+      },
+      remark: {
+        value: remark || '感谢您的预订，我们将为您提供优质服务。',
+        color: '#666666'
+      }
+    };
+  }
+
+  // Send service booking notification using your specific template
+  async sendServiceBookingNotification(
+    openid: string,
+    productType: string,
+    bookingNumber: string,
+    expiryDate: string,
+    remark?: string,
+    url?: string
+  ): Promise<boolean> {
+    const templateId = process.env.WECHAT_TEMPLATE_GUEST || 'tIkObjUKN-QrkrfqZ_OMS7X0I7aejVUwEqqfgi4YviY';
+    const data = this.createServiceBookingNotificationData(
+      productType,
+      bookingNumber,
+      expiryDate,
+      remark
+    );
+
+    try {
+      const result = await this.sendTemplateMessage(openid, templateId, data, url);
+      
+      if (result) {
+        console.log('Service booking notification sent successfully', {
+          openid,
+          productType,
+          bookingNumber,
+          templateId
+        });
+      } else {
+        console.error('Failed to send service booking notification', {
+          openid,
+          productType,
+          bookingNumber,
+          templateId
+        });
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Error in sendServiceBookingNotification:', error);
+      throw error;
+    }
+  }
+
 }
 
 export default new WeChatService();
