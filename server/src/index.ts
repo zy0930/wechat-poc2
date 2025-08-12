@@ -20,6 +20,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files for WeChat verification
+app.use(express.static('public'));
+
 // Session configuration
 app.use(session({
   secret: process.env.SESSION_SECRET || 'wechat-poc-secret-key',
