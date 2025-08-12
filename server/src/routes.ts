@@ -120,6 +120,12 @@ router.post('/api/booking/submit', async (req: Request, res: Response) => {
   }
 });
 
+// WeChat domain verification
+router.get('/MP_verify_6GIw6gWF6x17riAH.txt', (req: Request, res: Response) => {
+  res.type('text/plain');
+  res.send('6GIw6gWF6x17riAH');
+});
+
 // Health check endpoint
 router.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
