@@ -31,9 +31,13 @@ router.get('/api/wechat/auth', (req: Request, res: Response) => {
 
 // Handle WeChat OAuth callback
 router.get('/api/wechat/callback', async (req: Request, res: Response) => {
+  console.log('=== WeChat Callback Triggered ===');
+  console.log('Query params:', req.query);
+  
   const { code, state } = req.query;
   
   if (!code) {
+    console.log('ERROR: No authorization code provided');
     return res.status(400).json({ error: 'No authorization code provided' });
   }
 
@@ -56,6 +60,7 @@ router.get('/api/wechat/callback', async (req: Request, res: Response) => {
 
     // Redirect to frontend booking page with user info
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    console.log('Redirecting to:', `${frontendUrl}/booking?authorized=true&openid=${userInfo.openid}`);
     res.redirect(`${frontendUrl}/booking?authorized=true&openid=${userInfo.openid}`);
   } catch (error) {
     console.error('OAuth callback error:', error);
