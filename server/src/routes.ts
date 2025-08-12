@@ -108,7 +108,7 @@ router.post('/api/booking/submit', async (req: Request, res: Response) => {
     );
 
     // Send customer service message to enable chat between guest and support
-    const customerServiceMessage = `您好！感谢您的预订。我们的客服将很快与您联系，为您提供进一步的协助。如有任何疑问，请随时回复此消息。
+    const customerServiceMessage = `您的预订已提交！回复【1】确认订单，回复【2】修改订单
 
 预订详情：
 预订编号：${bookingId}
