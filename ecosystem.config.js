@@ -3,8 +3,8 @@ module.exports = {
     {
       name: 'wechat-server',
       script: './server/dist/index.js',
-      instances: 2,
-      exec_mode: 'cluster',
+      instances: 1,
+      exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
         PORT: 3001
