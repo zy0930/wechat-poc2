@@ -22,8 +22,10 @@ router.get('/api/wechat/verify', (req: Request, res: Response) => {
 router.get('/api/wechat/auth', (req: Request, res: Response) => {
   const redirectUri = `${process.env.SERVER_URL}/api/wechat/callback`;
   const state = req.query.state as string || '';
+  console.log('redirectUri', redirectUri);
+  console.log('state', state);
   const authUrl = wechatService.getOAuthUrl(redirectUri, state);
-  
+  console.log('authUrl', authUrl);
   res.redirect(authUrl);
 });
 
@@ -100,22 +102,6 @@ router.post('/api/booking/submit', async (req: Request, res: Response) => {
       guestMessageData
     );
 
-    // Send notification to support team
-    const supportOpenId = process.env.SUPPORT_OPENID || '';
-    const supportTemplateId = process.env.WECHAT_TEMPLATE_SUPPORT || '';
-    const supportMessageData = wechatService.createSupportNotificationData(
-      name,
-      phone,
-      date,
-      bookingId
-    );
-    
-    const supportMessageSent = await wechatService.sendTemplateMessage(
-      supportOpenId,
-      supportTemplateId,
-      supportMessageData
-    );
-
     // In a real application, you would save the booking to database here
     // For POC, we'll just return success
     
@@ -123,7 +109,6 @@ router.post('/api/booking/submit', async (req: Request, res: Response) => {
       success: true,
       bookingId,
       guestMessageSent,
-      supportMessageSent,
       message: 'Booking submitted successfully'
     });
   } catch (error) {

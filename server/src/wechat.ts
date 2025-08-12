@@ -91,6 +91,7 @@ class WeChatService {
       state: state
     });
     
+    console.log('params', params);
     return `https://open.weixin.qq.com/connect/oauth2/authorize?${params}#wechat_redirect`;
   }
 
@@ -211,40 +212,6 @@ class WeChatService {
     };
   }
 
-  // Create support notification message data
-  createSupportNotificationData(
-    name: string,
-    phone: string,
-    date: string,
-    bookingId: string
-  ): TemplateMessageData {
-    return {
-      first: {
-        value: '新的预约通知',
-        color: '#FF0000'
-      },
-      keyword1: {
-        value: bookingId,
-        color: '#173177'
-      },
-      keyword2: {
-        value: name,
-        color: '#173177'
-      },
-      keyword3: {
-        value: phone,
-        color: '#173177'
-      },
-      keyword4: {
-        value: date,
-        color: '#173177'
-      },
-      remark: {
-        value: '请及时处理客户预约。',
-        color: '#FF0000'
-      }
-    };
-  }
 }
 
 export default new WeChatService();

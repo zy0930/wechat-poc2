@@ -1,11 +1,12 @@
+import dotenv from 'dotenv';
+
+// Load environment variables FIRST
+dotenv.config({ path: './.env' });
+
 import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
-import dotenv from 'dotenv';
 import routes from './routes';
-
-// Load environment variables
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
