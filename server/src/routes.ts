@@ -91,24 +91,9 @@ router.post('/api/booking/submit', async (req: Request, res: Response) => {
   // Generate booking ID
   const bookingId = `BK${Date.now()}`;
   
-  try {
-    // Send confirmation message to guest
-    const guestTemplateId = process.env.WECHAT_TEMPLATE_GUEST || '';
-    const guestMessageData = wechatService.createBookingConfirmationData(
-      name,
-      phone,
-      date,
-      bookingId
-    );
-    
-    const guestMessageSent = await wechatService.sendTemplateMessage(
-      openid,
-      guestTemplateId,
-      guestMessageData
-    );
-
-    // Send customer service message to enable chat between guest and support
-    const customerServiceMessage = `您的预订已提交！回复【1】确认订单，回复【2】修改订单
+  try {  
+    // Send customer service message to enable chat between guest andcallback support
+    const customerServiceMessage = `您的预订已提交！回复【1】确认订单
 
 预订详情：
 预订编号：${bookingId}
@@ -128,7 +113,6 @@ router.post('/api/booking/submit', async (req: Request, res: Response) => {
     res.json({
       success: true,
       bookingId,
-      guestMessageSent,
       customerServiceSent,
       message: 'Booking submitted successfully'
     });
